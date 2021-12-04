@@ -99,9 +99,29 @@ function updateCart() {
    if(cart.length > 0){
       select('aside').classList.add('show')
 
+      select('.cart').innerHTML = ''
       for(let i in cart){
-         let pizzaJsonClone = pizzaJson.find((itemPizza) => itemPizza.id == pizzaJson[i].id)
-         console.log(pizzaJsonClone)
+         let pizzaItem = pizzaJson.find((itemPizza) => itemPizza.id == cart[i].id)
+         let cartItem = select('.models .cart--item').cloneNode(true)  //Clonando o item
+         
+         let pizzaNameSize = ''
+         switch(cart[i].size){
+            case 0:
+               pizzaNameSize = 'P'
+               break
+            case 1:
+               pizzaNameSize = 'M'
+               break
+            default:
+               pizzaNameSize = 'G'
+         }
+         let pizzaName = `${pizzaItem.name} (${pizzaNameSize})`
+
+         cartItem.querySelector('img').src = pizzaItem.img
+         cartItem.querySelector('.cart--item-nome').innerHTML = pizzaName
+         cartItem.querySelector('.cart--item--qt').innerHTML = cart[i].qtd
+
+         select('.cart').append(cartItem)
       }
    }
    else {
