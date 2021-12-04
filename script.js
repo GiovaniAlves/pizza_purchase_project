@@ -21,18 +21,18 @@ pizzaJson.map((item, index) => {
       let key = event.target.closest('.pizza-item').getAttribute('key')
       modalKey = key
       modalQtd = 1
-      select('.pizzaInfo--qt').innerHTML = 1
+      select('.pizzaInfo--qt').innerHTML = modalQtd
 
       select('.pizzaBig img').src = pizzaJson[key].img
       select('.pizzaInfo h1').innerHTML = pizzaJson[key].name
       select('.pizzaInfo--desc').innerHTML = pizzaJson[key].description
 
       select('.pizzaInfo--size.selected').classList.remove('selected')
-      selectAll('.pizzaInfo--size').forEach((size, sizeIndex) => {
+      selectAll('.pizzaInfo--size').forEach((itemPizzaSize, sizeIndex) => {
          if(sizeIndex === 2){
-            size.classList.add('selected')
+            itemPizzaSize.classList.add('selected')
          }
-         size.querySelector('span').innerHTML = pizzaJson[key].sizes[sizeIndex]
+         itemPizzaSize.querySelector('span').innerHTML = pizzaJson[key].sizes[sizeIndex]
       })
 
       select('.pizzaInfo--actualPrice').innerHTML = `R$ ${pizzaJson[key].price.toFixed(2)}`
@@ -76,10 +76,35 @@ selectAll('.pizzaInfo--size').forEach((item) => {
 })
 select('.pizzaInfo--addButton').addEventListener('click', () => {
    let size = parseInt(select('.pizzaInfo--size.selected').getAttribute('data-key'))
-   cart.push({
-      id: pizzaJson[modalKey].id,
-      size,
-      qtd: modalQtd
-   })
+
+   let identifier = `${pizzaJson[modalKey].id}@${size}`
+   let keyIdentifier = cart.findIndex((cartItem) => cartItem.identifier == identifier ) //Se retornar -1 é pq não tem o item correspondente
+
+   if(keyIdentifier > -1){
+      cart[keyIdentifier].qtd += modalQtd
+   }
+   else {
+      cart.push({
+         identifier,
+         id: pizzaJson[modalKey].id,
+         size,
+         qtd: modalQtd
+      })
+   }
+   updateCart()
    closeModal()
 })
+
+function updateCart() {
+   if(cart.length > 0){
+      select('aside').classList.add('show')
+
+      for(let i in cart){
+         let pizzaJsonClone = pizzaJson.find((itemPizza) => itemPizza.id == pizzaJson[i].id)
+         console.log(pizzaJsonClone)
+      }
+   }
+   else {
+      select('aside').classList.remove('show')
+   }
+}
